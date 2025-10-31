@@ -38,35 +38,54 @@ class _FavoritesPageState extends State<FavoritesPage> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _favorites.isEmpty
-              ? const Center(
-                  child: Text('No favorites yet.'),
+              ? Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.favorite_border, size: 72, color: Colors.grey[400]),
+                    const SizedBox(height: 12),
+                    const Text('No favorites yet.', style: TextStyle(fontSize: 16, color: Colors.grey)),
+                  ],
                 )
               : RefreshIndicator(
                   onRefresh: _load,
-                  child: ListView.builder(
+                  child: ListView.separated(
+                    padding: const EdgeInsets.all(12),
                     itemCount: _favorites.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
                     itemBuilder: (context, index) {
                       final f = _favorites[index];
-                      return ListTile(
-                        leading: f.thumbnailUrl != null && f.thumbnailUrl!.isNotEmpty
-                            ? Image.network(f.thumbnailUrl!, width: 56, height: 56, fit: BoxFit.cover)
-                            : const Icon(Icons.video_library),
-                        title: Text(
-                          f.title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                      return Card(
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        child: ListTile(
+                          leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: f.thumbnailUrl != null && f.thumbnailUrl!.isNotEmpty
+                                ? Image.network(f.thumbnailUrl!, width: 56, height: 56, fit: BoxFit.cover)
+                                : Container(
+                                    width: 56,
+                                    height: 56,
+                                    color: Colors.grey[300],
+                                    child: const Icon(Icons.play_circle_outline),
+                                  ),
+                          ),
+                          title: Text(
+                            f.title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          trailing: const Icon(Icons.play_arrow),
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              AppRoutes.videoPlayer,
+                              arguments: {
+                                'videoId': f.videoId,
+                                'videoTitle': f.title,
+                              },
+                            );
+                          },
                         ),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            AppRoutes.videoPlayer,
-                            arguments: {
-                              'videoId': f.videoId,
-                              'videoTitle': f.title,
-                            },
-                          );
-                        },
                       );
                     },
                   ),

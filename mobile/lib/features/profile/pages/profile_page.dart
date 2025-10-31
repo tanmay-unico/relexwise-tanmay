@@ -149,72 +149,85 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       body: ListView(
         children: [
-          const SizedBox(height: 16),
-          CircleAvatar(
-            radius: 50,
-            child: Icon(Icons.person, size: 50),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            _userName ?? 'User',
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
-          ),
-          Text(
-            _userEmail ?? '',
-            style: const TextStyle(color: Colors.grey),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 32),
-          const SizedBox(height: 16),
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'Test Push Notifications',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.blue.shade600, Colors.blue.shade400],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                TextField(
-                  controller: _titleController,
-                  decoration: const InputDecoration(
-                    labelText: 'Title',
-                    border: OutlineInputBorder(),
-                    hintText: 'Enter notification title',
-                  ),
-                  maxLength: 100,
+                CircleAvatar(
+                  radius: 44,
+                  backgroundColor: Colors.white,
+                  child: Icon(Icons.person, size: 44, color: Colors.blue.shade700),
                 ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: _bodyController,
-                  decoration: const InputDecoration(
-                    labelText: 'Body',
-                    border: OutlineInputBorder(),
-                    hintText: 'Enter notification body',
-                  ),
-                  maxLines: 3,
-                  maxLength: 500,
+                const SizedBox(height: 12),
+                Text(
+                  _userName ?? 'User',
+                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                  textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 24),
-                ElevatedButton.icon(
-                  onPressed: _sendTestPush,
-                  icon: const Icon(Icons.send),
-                  label: const Text('Send Test Push'),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Rate limit: 5 requests per minute',
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                const SizedBox(height: 4),
+                Text(
+                  _userEmail ?? '',
+                  style: const TextStyle(color: Colors.white70),
                   textAlign: TextAlign.center,
                 ),
               ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Test Push Notifications', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: _titleController,
+                      decoration: const InputDecoration(
+                        labelText: 'Title',
+                        border: OutlineInputBorder(),
+                        hintText: 'Enter notification title',
+                      ),
+                      maxLength: 100,
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: _bodyController,
+                      decoration: const InputDecoration(
+                        labelText: 'Body',
+                        border: OutlineInputBorder(),
+                        hintText: 'Enter notification body',
+                      ),
+                      maxLines: 3,
+                      maxLength: 500,
+                    ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: _sendTestPush,
+                        icon: const Icon(Icons.send),
+                        label: const Text('Send Test Push'),
+                        style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text('Rate limit: 5 requests per minute', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                  ],
+                ),
+              ),
             ),
           ),
           const SizedBox(height: 16),
