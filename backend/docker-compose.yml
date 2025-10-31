@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: streamsync-postgres
+    environment:
+      POSTGRES_USER: streamsync_admin
+      POSTGRES_PASSWORD: postgres_password
+      POSTGRES_DB: streamsync
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U streamsync_admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: streamsync-backend
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: streamsync_admin
+      DB_PASSWORD: postgres_password
+      DB_NAME: streamsync
+      NODE_ENV: development
+      PORT: 3000
+      LOG_LEVEL: info
+      JWT_SECRET: change-this-in-production-min-32-chars
+      JWT_EXPIRATION: 7d
+      YOUTUBE_API_KEY: ${YOUTUBE_API_KEY:-your-youtube-api-key}
+      YT_CACHE_TTL_MIN: 10
+      FIREBASE_SERVICE_ACCOUNT_JSON: ${FIREBASE_SERVICE_ACCOUNT_JSON:-}
+      NOTIF_MAX_RETRIES: 5
+      NOTIFICATION_WORKER_ENABLED: "true"
+      TEST_PUSH_RATE_LIMIT: 5
+      TEST_PUSH_WINDOW_MS: 60000
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./src:/app/src
+    command: npm run start:dev
+
+volumes:
+  postgres_data:
+
