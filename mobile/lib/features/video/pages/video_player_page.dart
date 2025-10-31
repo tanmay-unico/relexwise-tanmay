@@ -46,19 +46,30 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _isFullscreen ? null : AppBar(title: const Text('Video Player')),
-      body: Column(
-        children: [
-          YoutubePlayer(
-            controller: _controller,
-            showVideoProgressIndicator: true,
-            progressIndicatorColor: Colors.blue,
-            progressColors: const ProgressBarColors(
-              playedColor: Colors.blue,
-              handleColor: Colors.blueAccent,
+    return WillPopScope(
+      onWillPop: () async {
+        if (_controller.value.isFullScreen) {
+          _controller.toggleFullScreenMode();
+          return false;
+        }
+        return true;
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: !_isFullscreen,
+        appBar: _isFullscreen ? null : AppBar(title: const Text('Video Player')),
+        body: Column(
+          children: [
+            Expanded(
+              child: YoutubePlayer(
+                controller: _controller,
+                showVideoProgressIndicator: true,
+                progressIndicatorColor: Colors.blue,
+                progressColors: const ProgressBarColors(
+                  playedColor: Colors.blue,
+                  handleColor: Colors.blueAccent,
+                ),
+              ),
             ),
-          ),
           if (!_isFullscreen) ...[
             Expanded(
               child: SingleChildScrollView(
@@ -103,7 +114,8 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
               ),
             ),
           ],
-        ],
+          ],
+        ),
       ),
     );
   }

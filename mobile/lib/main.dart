@@ -105,6 +105,29 @@ void main() async {
           );
         }
       });
+      // Ensure notification from taps (when app brought to foreground) uses provided title/body
+      FirebaseMessaging.onMessageOpenedApp.listen((msg) {
+        final notification = msg.notification;
+        final title = notification?.title ?? msg.data['title'];
+        final body = notification?.body ?? msg.data['body'];
+        if (title != null || body != null) {
+          flutterLocalNotificationsPlugin.show(
+            msg.hashCode,
+            title,
+            body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                androidChannel.id,
+                androidChannel.name,
+                channelDescription: androidChannel.description,
+                importance: Importance.high,
+                priority: Priority.high,
+              ),
+              iOS: const DarwinNotificationDetails(),
+            ),
+          );
+        }
+      });
     } catch (e) {
       // ignore: avoid_print
       print('FCM setup failed: $e');

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import '../../../core/storage/favorites_store.dart';
 import '../../../core/routes/app_routes.dart';
 
@@ -12,11 +13,13 @@ class FavoritesPage extends StatefulWidget {
 class _FavoritesPageState extends State<FavoritesPage> {
   List<FavoriteItem> _favorites = [];
   bool _isLoading = false;
+  StreamSubscription<void>? _sub;
 
   @override
   void initState() {
     super.initState();
     _load();
+    _sub = FavoritesStore.onChanged.listen((_) => _load());
   }
 
   Future<void> _load() async {
@@ -29,6 +32,12 @@ class _FavoritesPageState extends State<FavoritesPage> {
       _favorites = favs;
       _isLoading = false;
     });
+  }
+
+  @override
+  void dispose() {
+    _sub?.cancel();
+    super.dispose();
   }
 
   @override

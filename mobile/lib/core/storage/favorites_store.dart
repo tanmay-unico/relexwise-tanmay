@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -24,6 +25,8 @@ class FavoriteItem {
 
 class FavoritesStore {
   static const String _prefsKey = 'favorites_v1';
+  static final StreamController<void> _changes = StreamController<void>.broadcast();
+  static Stream<void> get onChanged => _changes.stream;
 
   static Future<List<FavoriteItem>> getFavorites() async {
     final prefs = await SharedPreferences.getInstance();
@@ -44,6 +47,7 @@ class FavoritesStore {
     final prefs = await SharedPreferences.getInstance();
     final jsonList = items.map((e) => e.toJson()).toList(growable: false);
     await prefs.setString(_prefsKey, jsonEncode(jsonList));
+    _changes.add(null);
   }
 
   static Future<bool> isFavorite(String videoId) async {

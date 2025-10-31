@@ -99,27 +99,37 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: BlocBuilder<VideosCubit, VideosState>(
-        builder: (context, state) {
-          if (state is VideosLoading && _videos.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (state is VideosLoaded) {
-            _videos = state.videos;
-          }
-          if (state is VideosError && _videos.isEmpty) {
-            return Center(child: Text(state.message));
-          }
-          return RefreshIndicator(
-            onRefresh: () => _loadVideosCubit(context, refresh: true),
-            child: ListView.builder(
-              itemCount: _videos.length,
-              itemBuilder: (context, index) {
-                return _buildVideoCard(index);
-              },
-            ),
-          );
-        },
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.white, Colors.blue.shade50],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: BlocBuilder<VideosCubit, VideosState>(
+          builder: (context, state) {
+            if (state is VideosLoading && _videos.isEmpty) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (state is VideosLoaded) {
+              _videos = state.videos;
+            }
+            if (state is VideosError && _videos.isEmpty) {
+              return Center(child: Text(state.message));
+            }
+            return RefreshIndicator(
+              onRefresh: () => _loadVideosCubit(context, refresh: true),
+              child: ListView.builder(
+                padding: const EdgeInsets.only(bottom: 12),
+                itemCount: _videos.length,
+                itemBuilder: (context, index) {
+                  return _buildVideoCard(index);
+                },
+              ),
+            );
+          },
+        ),
       ),
     ));
   }
@@ -133,7 +143,10 @@ class _HomePageState extends State<HomePage> {
     final publishedAt = v['publishedAt']?.toString() ?? '';
     final durationSeconds = v['durationSeconds'] is int ? v['durationSeconds'] as int? : null;
     return Card(
-      margin: const EdgeInsets.all(8),
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () {
           Navigator.pushNamed(
@@ -175,9 +188,9 @@ class _HomePageState extends State<HomePage> {
                       color: Colors.black87,
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: const Text(
-                      '',
-                      style: TextStyle(color: Colors.white, fontSize: 12),
+                    child: Text(
+                      _formatDuration(durationSeconds),
+                      style: const TextStyle(color: Colors.white, fontSize: 12),
                     ),
                   ),
                 ),
@@ -210,31 +223,7 @@ class _HomePageState extends State<HomePage> {
                           _toggleFavorite(v);
                         },
                       ),
-                      PopupMenuButton(
-                        itemBuilder: (context) => [
-                          const PopupMenuItem(
-                            value: 'favorite',
-                            child: Text('Add to Favorites'),
-                          ),
-                          const PopupMenuItem(
-                            value: 'details',
-                            child: Text('View Details'),
-                          ),
-                          const PopupMenuItem(
-                            value: 'share',
-                            child: Text('Share'),
-                          ),
-                        ],
-                        onSelected: (value) {
-                          if (value == 'favorite') {
-                            // TODO: Implement favorite
-                          } else if (value == 'details') {
-                            // TODO: Show details
-                          } else if (value == 'share') {
-                            _shareVideo(v);
-                          }
-                        },
-                      ),
+                      // Removed overflow menu per request
                     ],
                   ),
                   const SizedBox(height: 4),

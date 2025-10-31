@@ -119,9 +119,12 @@ class _NotificationsPageState extends State<NotificationsPage> {
       key: ValueKey<String>(notification['id']?.toString() ?? ''),
       endActionPane: ActionPane(
         motion: const DrawerMotion(),
-        dismissible: DismissiblePane(onDismissed: () {
-          _deleteNotification(notification['id']);
-        }),
+        dismissible: DismissiblePane(
+          onDismissed: () {
+            _deleteNotification(notification['id']);
+          },
+          dismissThreshold: 0.5,
+        ),
         children: const [],
       ),
       child: Card(

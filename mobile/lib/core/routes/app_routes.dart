@@ -8,6 +8,9 @@ import '../../features/notifications/pages/notifications_page.dart';
 import '../../features/profile/pages/profile_page.dart';
 import '../../features/profile/pages/favorites_page.dart';
 import '../../features/video/pages/video_player_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../features/auth/viewmodels/auth_cubit.dart';
+import '../../core/di/injection.dart';
 
 class AppRoutes {
   static const String splash = '/';
@@ -24,9 +27,19 @@ class AppRoutes {
       case splash:
         return MaterialPageRoute(builder: (_) => const SplashPage());
       case login:
-        return MaterialPageRoute(builder: (_) => const LoginPage());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<AuthCubit>(),
+            child: const LoginPage(),
+          ),
+        );
       case register:
-        return MaterialPageRoute(builder: (_) => const RegisterPage());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<AuthCubit>(),
+            child: const RegisterPage(),
+          ),
+        );
       case home:
         return MaterialPageRoute(builder: (_) => const HomeShellPage());
       case notifications:

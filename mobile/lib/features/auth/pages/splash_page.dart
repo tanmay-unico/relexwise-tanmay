@@ -40,10 +40,10 @@ class _SplashPageState extends State<SplashPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.play_circle_outline, size: 100, color: Colors.blue),
+            Icon(Icons.school, size: 100, color: Colors.blue),
             const SizedBox(height: 24),
             const Text(
-              'StreamSync Lite',
+              'Relexwise',
               style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
