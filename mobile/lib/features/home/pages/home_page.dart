@@ -5,6 +5,9 @@ import '../../../core/routes/app_routes.dart';
 import '../../../core/api/services.dart';
 import '../../../core/storage/favorites_store.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../core/di/injection.dart';
+import '../bloc/videos_cubit.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,31 +24,11 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _loadVideos();
     _loadFavorites();
   }
 
-  Future<void> _loadVideos() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final videos = await apiService.getLatestVideos();
-      _videos = videos;
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to load videos: $e')),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
+  Future<void> _loadVideosCubit(BuildContext context, {bool refresh = false}) async {
+    await context.read<VideosCubit>().load(refresh: refresh);
   }
 
   Future<void> _loadFavorites() async {
@@ -101,7 +84,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return BlocProvider(
+      create: (_) => getIt<VideosCubit>()..load(),
+      child: Scaffold(
       appBar: AppBar(
         title: const Text('Relexwise'),
         automaticallyImplyLeading: false,
@@ -114,18 +99,29 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: _loadVideos,
-        child: _isLoading && _videos.isEmpty
-            ? const Center(child: CircularProgressIndicator())
-            : ListView.builder(
-                itemCount: _videos.length,
-                itemBuilder: (context, index) {
-                  return _buildVideoCard(index);
-                },
-              ),
+      body: BlocBuilder<VideosCubit, VideosState>(
+        builder: (context, state) {
+          if (state is VideosLoading && _videos.isEmpty) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (state is VideosLoaded) {
+            _videos = state.videos;
+          }
+          if (state is VideosError && _videos.isEmpty) {
+            return Center(child: Text(state.message));
+          }
+          return RefreshIndicator(
+            onRefresh: () => _loadVideosCubit(context, refresh: true),
+            child: ListView.builder(
+              itemCount: _videos.length,
+              itemBuilder: (context, index) {
+                return _buildVideoCard(index);
+              },
+            ),
+          );
+        },
       ),
-    );
+    ));
   }
 
   Widget _buildVideoCard(int index) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:share_plus/share_plus.dart';
 
 class VideoPlayerPage extends StatefulWidget {
   final String videoId;
@@ -76,10 +77,11 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        _buildActionButton(Icons.thumb_up, 'Like', () {}),
-                        _buildActionButton(Icons.thumb_down, 'Dislike', () {}),
                         _buildActionButton(Icons.comment, 'Comment', () {}),
-                        _buildActionButton(Icons.share, 'Share', () {}),
+                        _buildActionButton(Icons.share, 'Share', () {
+                          final url = 'https://www.youtube.com/watch?v=' + widget.videoId;
+                          Share.share(widget.videoTitle + '\n' + url, subject: widget.videoTitle);
+                        }),
                       ],
                     ),
                     const Divider(),
