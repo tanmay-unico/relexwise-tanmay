@@ -1,6 +1,4 @@
-Relexwise - Full Stack App (NestJS + Flutter)
-
-Welcome! This repository contains a complete mobile app (Flutter) and backend API (NestJS + PostgreSQL) you can run locally and deploy to production. This guide is written for beginners; follow it step-by-step even if you have never done this before.
+Relexwise - Tanmay Lautawar
 
 Table of Contents
 - What is Relexwise?
@@ -21,8 +19,8 @@ Relexwise is a video learning app. Users can:
 - Browse a feed of videos
 - Open and watch videos
 - Favorite videos (saved locally on device)
-- Receive push notifications (optional)
-
+- Receive push notifications
+- 
 Features
 - Backend API with NestJS + TypeORM + PostgreSQL
 - Production-ready database configuration for AWS RDS (with SSL)
